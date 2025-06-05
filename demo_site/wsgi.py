@@ -21,3 +21,7 @@ try:
     call_command("migrate", interactive=False)
 except Exception as e:
     print(f"[WARNING] Auto migrate failed: {e}")
+
+from django.contrib.auth.models import User
+if not User.objects.filter(username="admin").exists():
+    User.objects.create_superuser("0", "admin@example.com", "0")
