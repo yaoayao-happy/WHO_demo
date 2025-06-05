@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: demo-site
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn demo_site.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: demo_site.settings
+      - key: DJANGO_SECRET_KEY
+        value: super-secret-key-change-me
+      - key: DATABASE_URL
+        fromDatabase:
+          name: demo-site-db
+          property: connectionString
+
+databases:
+  - name: demo-site-db
+    databaseName: demo
+    user: demo_user

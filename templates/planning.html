@@ -1,0 +1,89 @@
+{% comment %} {% block content %}
+<h2 style="text-align:center;">Strategic Implementation Planning</h2>
+<table border="1" width="100%" cellspacing="0" cellpadding="4">
+  <thead>
+    <tr>
+      <th>Strategic Priority</th>
+      <th>Strategic Objective</th>
+      <th>Suggested Phase</th>
+      <th>Score</th>
+      <th>Start</th>
+      <th>End</th>
+      <th colspan="24">Timeline (2025Q3 - 2030Q4)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in planning_data %}
+    <tr>
+      <td>{{ row.priority }}</td>
+      <td>{{ row.objective }}</td>
+      <td>{{ row.phase }}</td>
+      <td>{{ row.score }}%</td>
+      <td>
+        <select>
+          {% for q in quarters %}<option value="{{ q }}" {% if q == row.start %}selected{% endif %}>{{ q }}</option>{% endfor %}
+        </select>
+      </td>
+      <td>
+        <select>
+          {% for q in quarters %}<option value="{{ q }}" {% if q == row.end %}selected{% endif %}>{{ q }}</option>{% endfor %}
+        </select>
+      </td>
+      {% for q in quarters %}
+        <td style="width: 20px; height: 20px; background-color: {% if q >= row.start and q <= row.end %}yellow{% else %}white{% endif %}; border: 1px solid #ccc;"></td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} {% endcomment %}
+
+{% block content %}
+<h2 style="text-align:center;">Strategic Implementation Planning</h2>
+<form method="post">
+  {% csrf_token %}
+  <table border="1" width="100%" cellspacing="0" cellpadding="4">
+    <thead>
+      <tr>
+        <th>Strategic Priority</th>
+        <th>Strategic Objective</th>
+        <th>Suggested Phase</th>
+        <th>Score</th>
+        <th>Start</th>
+        <th>End</th>
+        <th colspan="24">Timeline (2025Q3 - 2030Q4)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in planning_data %}
+      <tr>
+        <td>{{ row.priority }}</td>
+        <td>{{ row.objective }}</td>
+        <td>{{ row.phase }}</td>
+        <td>{{ row.score }}%</td>
+        <td>
+          <select name="start_{{ row.id }}">
+            {% for q in quarters %}
+              <option value="{{ q }}" {% if q == row.start %}selected{% endif %}>{{ q }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        <td>
+          <select name="end_{{ row.id }}">
+            {% for q in quarters %}
+              <option value="{{ q }}" {% if q == row.end %}selected{% endif %}>{{ q }}</option>
+            {% endfor %}
+          </select>
+        </td>
+        {% for q in quarters %}
+          <td style="width: 20px; height: 20px; background-color: {% if q >= row.start and q <= row.end %}yellow{% else %}white{% endif %}; border: 1px solid #ccc;"></td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="text-align:center; margin-top:20px;">
+    <button type="submit">Save Planning</button>
+  </div>
+</form>
+{% endblock %}

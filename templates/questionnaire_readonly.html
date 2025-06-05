@@ -1,0 +1,45 @@
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mt-4">Submitted Questionnaire</h2>
+  <p><strong>Submitted at:</strong> {{ submitted_at }}</p>
+
+  {% for sp in priorities %}
+    <h3 class="mt-4">{{ sp.title }}</h3>
+
+    {% for obj in sp.objective_set.all %}
+      <h4 class="mt-3">{{ obj.title }}</h4>
+
+      <ul>
+        {% for q in obj.question_set.all %}
+          <li class="mb-3">
+            <p>{{ q.html_text|default:q.text|safe }}</p>
+
+            {% for value, label in level_choices %}
+              <label class="me-2">
+                <input type="radio" name="question_{{ q.id }}" value="{{ value }}"
+                  {% if answers|get_item:q.id == value %}checked{% endif %}
+                  disabled>
+                {{ label }}
+              </label>
+            {% endfor %}
+
+            {% if q.allow_na %}
+              <label>
+                <input type="radio" name="question_{{ q.id }}" value="NA"
+                  {% if answers|get_item:q.id == "NA" %}checked{% endif %}
+                  disabled>
+                Not Applicable
+              </label>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+    {% endfor %}
+  {% endfor %}
+
+  <a class="btn btn-secondary mt-4" href="{% url 'questionnaire_history' %}">← Back to History</a>
+</div>
+{% endblock %}

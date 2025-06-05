@@ -1,0 +1,104 @@
+{% load custom_filters %}
+
+
+<h2 class="text-center">
+    Strategic Priorities Questionnaire
+</h2>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for sp in priorities %}
+        <h3>{{ sp.title }}</h3>
+
+        {% for obj in sp.objective_set.all %}
+            <h4>{{ obj.title }}</h4>
+
+            <ul>
+            {% for q in obj.question_set.all %}
+                <li>
+                    <p>{{ q.html_text|default:q.text|safe }}</p>
+
+                    {% for value, label in level_choices %}
+                        <label>
+                            <input type="radio" name="question_{{ q.id }}" value="{{ value }}"
+                                {% if answers|get_item:q.id == value %}checked{% endif %}
+                                {% if submitted %}disabled{% endif %}
+                                required>
+                            {{ label }}
+                        </label>
+                    {% endfor %}
+
+                    {% if q.allow_na %}
+                        <label>
+                            <input type="radio" name="question_{{ q.id }}" value="NA"
+                                {% if answers|get_item:q.id == "NA" %}checked{% endif %}
+                                {% if submitted %}disabled{% endif %}
+                                required>
+                            Not Applicable
+                        </label>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+
+        {% endfor %}
+    {% endfor %}
+
+    <br>
+    {% if not submitted %}
+    <div class="mt-4">
+        <button type="submit" name="action" value="save" class="btn btn-secondary">💾 Save</button>
+        <button type="submit" name="action" value="submit" class="btn btn-primary">✅ Submit</button>
+        <button type="button" id="exit-button" class="btn btn-outline-danger">🚪 Exit</button>
+    </div>
+    {% else %}
+    <p><strong>You have submitted this questionnaire. Responses are read-only.</strong></p>
+    {% endif %}
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // ✅ 启用 Bootstrap popover（如使用了提示）
+  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+  popoverTriggerList.forEach(function (popoverTriggerEl) {
+    new bootstrap.Popover(popoverTriggerEl);
+  });
+
+  // ✅ 动态移除 required：当点击 Save 时
+  const saveBtn = document.querySelector('button[name="action"][value="save"]');
+  const form = document.querySelector("form");
+  if (saveBtn && form) {
+    saveBtn.addEventListener("click", function () {
+      const inputs = form.querySelectorAll("[required]");
+      inputs.forEach(input => input.removeAttribute("required"));
+    });
+  }
+
+  // ✅ Exit 按钮弹窗确认
+  const exitBtn = document.getElementById("exit-button");
+  if (exitBtn) {
+    exitBtn.addEventListener("click", function () {
+      const confirmExit = confirm("You have unsaved or unsubmitted changes. Are you sure you want to leave?");
+      if (confirmExit) {
+        window.location.href = "{% url 'user_home' %}";
+      }
+    });
+  }
+});
+</script>

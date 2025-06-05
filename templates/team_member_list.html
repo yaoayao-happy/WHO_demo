@@ -1,0 +1,23 @@
+<h2>My Team Members</h2>
+
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Competent Authority</th>
+        <th>Contact Email</th>
+    </tr>
+    {% for m in members %}
+    <tr>
+        <td>{{ m.name }}</td>
+        <td>{{ m.position }}</td>
+        <td>{{ m.competent_authority }}</td>
+        <td>{{ m.contact_email }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="{% url 'add_team_member' %}">Add New Team Member</a> |
+<a href="{% url 'user_home' %}">Back to Home</a> |
+<a href="{% url 'logout' %}">Logout</a>

@@ -1,0 +1,17 @@
+<h2>Welcome, User!</h2>
+
+
+<p><strong>Email:</strong> {{ request.user.email }}</p>
+<p><strong>Country:</strong> {{ profile.country }}</p>
+<p><strong>National Team Leader:</strong> {{ profile.national_team_leader }}</p>
+<p><strong>Registered At:</strong> {{ profile.created_at }}</p>
+
+<ul>
+    <li><a href="{% url 'team_member_list' %}">My Team Members</a></li>
+    <li><a href="{% url 'questionnaire' %}">Fill New Questionnaire</a></li>
+    <li><a href="{% url 'questionnaire_history' %}">View Past Questionnaires</a></li>
+    <li><a href="{% url 'analysis' %}">📊 View Your Summary</a></li>
+    <li><a href="{% url 'dashboard' %}">View Dashboard</a></li>
+    <li><a href="{% url 'planning' %}">Plan</a></li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul>

@@ -1,0 +1,18 @@
+{% block content %}
+  <h2>Your Past Questionnaire Submissions</h2>
+
+  {% if submissions %}
+    <ul>
+      {% for submission in submissions %}
+        <li>
+          Submitted at {{ submission.submitted_at }}
+          — <a href="{% url 'questionnaire_detail' submission.id %}">View</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You have not submitted any questionnaires yet.</p>
+  {% endif %}
+
+  <a class="btn btn-secondary mt-4" href="{% url 'user_home' %}">← Back to Home</a>
+{% endblock %}

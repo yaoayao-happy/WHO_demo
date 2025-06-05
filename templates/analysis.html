@@ -1,0 +1,55 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<h2>Analysis Report for {{ submission.user.username }}</h2>
+
+{% for block in report %}
+  <h3>{{ block.priority }}</h3>
+  <table border="1">
+    <tr>
+      <th>Objective</th><th>Average</th>
+    </tr>
+    {% for title, avg, w in block.objectives %}
+    <tr>
+      <td>{{ title }}</td>
+      <td style="background-color: {% if avg == 0 %}#ff3333{% elif avg < 3 %}orange{% else %}lightgreen{% endif %}">
+        {{ avg|floatformat:1 }} / 5
+      </td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td><strong>Priority Score:</strong></td>
+      <td><strong>{{ block.priority_score }}</strong></td>
+    </tr>
+  </table>
+{% endfor %}
+
+<hr>
+<h3>Total GSFS Score: {{ overall_score }} / 5</h3>
+
+<hr>
+<h2 style="text-align: center;">Bar Charts for Each Strategic Priority</h2>
+{% for chart in priority_barcharts %}
+  <h3>{{ chart.title }}</h3>
+  <canvas id="chart_{{ forloop.counter }}" width="500" height="300"></canvas>
+  <script>
+    const ctx{{ forloop.counter }} = document.getElementById('chart_{{ forloop.counter }}').getContext('2d');
+    new Chart(ctx{{ forloop.counter }}, {
+      type: 'bar',
+      data: {
+        labels: [{% for item in chart.data %}"{{ item.label }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+        datasets: [{
+          label: '{{ chart.title }}',
+          data: [{% for item in chart.data %}{{ item.value }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: false,
+        scales: {
+          y: { beginAtZero: true, max: 100 }
+        }
+      }
+    });
+  </script>
+{% endfor %}

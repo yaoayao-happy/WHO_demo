@@ -1,0 +1,48 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<h2 style="text-align: center;">Dashboard</h2>
+
+<table border="1" width="100%">
+    <tr>
+        {% for i in "12345" %}
+        <th>PHASE {{ i }}</th>
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for phase in phases %}
+        <td valign="top">
+            {% for obj in phase %}
+                <div style="background-color: {{ obj.color }}; margin: 5px; padding: 5px;">
+                    <strong>{{ obj.code }}</strong>: {{ obj.title }}
+                </div>
+            {% endfor %}
+        </td>
+        {% endfor %}
+    </tr>
+</table>
+
+<hr>
+<h2 style="text-align: center;">Average Score per Phase</h2>
+<canvas id="phaseChart" width="500" height="300"></canvas>
+<script>
+  const ctxPhase = document.getElementById('phaseChart').getContext('2d');
+  new Chart(ctxPhase, {
+    type: 'bar',
+    data: {
+      labels: [{% for item in phase_chart %}"{{ item.label }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+      datasets: [{
+        label: 'Phase Average Scores',
+        data: [{% for item in phase_chart %}{{ item.value }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+        responsive: false,
+        scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+</script>
