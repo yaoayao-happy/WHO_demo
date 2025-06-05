@@ -16,5 +16,5 @@ services:
 
 databases:
   - name: demo-site-db
-    databaseName: demo
-    user: demo_user
+    databaseName: demo_site_db_0atm
+    user: demo_site_db_0atm_user
